@@ -136,7 +136,7 @@
                         },
                         success: function(data){
                             response($.map(data, function(item) {
-                                return {label: item.label, value: item.value};
+                                return {label: item.label, value: item.value, html_label : item.html_label};
                             }));
                         },
                         complete: function (XMLHttpRequest, textStatus) {
@@ -148,7 +148,7 @@
                     return false;
                 },
                 select: function(event, ui) { // add repr, add value
-                    repr_add(elem, ui.item.label, options);
+                    repr_add(elem, ui.item.html_label, options);
                     value_add(elem, ui.item.value, options);
                     elem.val() ? $(options.remove_link).show() : $(options.remove_link).hide();
                     $(this).val("").focus();
@@ -158,7 +158,7 @@
             .data("autocomplete")._renderItem = function(ul,item) {
                 return $("<li></li>")
                     .data( "item.autocomplete", item )
-                    .append( "<a>" + item.label + " (" + item.value + ")")
+                    .append( "<a>" + item.html_label + " (" + item.value + ")")
                     .appendTo(ul);
             };
     };
@@ -172,7 +172,7 @@
             options.wrapper_repr.find("li.grp-repr").remove();
             options.wrapper_search.find("input").val("");
             $.each(data, function(index) {
-                repr_add(elem, data[index].label, options);
+                repr_add(elem, data[index].html_label, options);
             });
             elem.val() ? $(options.remove_link).show() : $(options.remove_link).hide();
         });

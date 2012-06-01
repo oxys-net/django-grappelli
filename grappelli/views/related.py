@@ -25,6 +25,10 @@ def get_label(f):
         return f.related_label()
     return f.__unicode__()
 
+def get_html_label(f):
+    if getattr(f, "related_html_label", None):
+        return f.related_html_label()
+    return f.__unicode__()
 
 @never_cache
 def related_lookup(request):
@@ -40,7 +44,7 @@ def related_lookup(request):
                 try:
                     model = models.get_model(app_label, model_name)
                     obj = model.objects.get(pk=object_id)
-                    data.append({"value":obj.id,"label":get_label(obj)})
+                    data.append({"value":obj.id,"label":get_label(obj), "html_label":u'%s' % get_html_label(obj) })
                     return HttpResponse(simplejson.dumps(data), mimetype='application/javascript')
                 except:
                     pass
@@ -65,7 +69,7 @@ def m2m_lookup(request):
                     if obj_id:
                         try:
                             obj = model.objects.get(pk=obj_id)
-                            data.append({"value":obj.pk,"label":get_label(obj)})
+                            data.append({"value":obj.pk,"label":get_label(obj) , "html_label":u'%s' % get_html_label(obj)})
                         except obj.DoesNotExist:
                             data.append({"value":obj_id,"label":_("?")})
             return HttpResponse(simplejson.dumps(data), mimetype='application/javascript')
@@ -98,7 +102,7 @@ def autocomplete_lookup(request):
                 search_qs.dup_select_related(qs)
                 search_qs = search_qs.filter(reduce(operator.or_, search))
                 qs = qs & search_qs
-            data = [{"value":f.pk,"label":u'%s' % get_label(f)} for f in qs[:10]]
+            data = [{"value":f.pk,"label":u'%s' % get_label(f) , "html_label":u'%s' % get_html_label(f)} for f in qs[:10]]
             label = ungettext(
                 '%(counter)s result',
                 '%(counter)s results',
