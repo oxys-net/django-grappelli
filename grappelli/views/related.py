@@ -95,7 +95,10 @@ def autocomplete_lookup(request):
                     if item.split("=")[0] != "t":
                         filters[smart_str(item.split("=")[0])]=smart_str(item.split("=")[1])
             # SEARCH
-            qs = model._default_manager.nocache().all()
+            if hasattr(model._default_manager, 'nocache'):
+                qs = model._default_manager.nocache().all()
+            else:
+                qs = model._default_manager.all()
             for bit in term.split():
                 search = [models.Q(**{smart_str(item):smart_str(bit)}) for item in model.autocomplete_search_fields()]
                 search_qs = QuerySet(model)
